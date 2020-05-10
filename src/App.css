@@ -28,10 +28,57 @@
   color: #61dafb;
 }
 
+@keyframes wallAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(0, 0, 66, 0.75);
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: rgba(17, 104, 217, 0.75);
+  }
+
+  75% {
+    transform: scale(1.2);
+    backgound-color: rgba(0, 217, 160, 0.75);
+  }
+
+  100% {
+    background-color: grey;
+    transform: scale(1);
+    border-radius: 0;
+  }
+}
+
+@keyframes visitedAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(0, 0, 66, 0.75);
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: rgba(17, 104, 217, 0.75);
+  }
+
+  75% {
+    transform: scale(1.2);
+    backgound-color: rgba(0, 217, 160, 0.75);
+  }
+
+  100% {
+    background-color: blue;
+    transform: scale(1);
+    border-radius: 0;
+  }
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
