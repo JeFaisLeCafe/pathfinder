@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from "react";
+import React from "react";
 import Node from "./Node/Node";
 import styled from "styled-components";
 import {djikstra, getNodesInShortestPathOrder} from "../algorithms/djikstra";
@@ -9,8 +9,12 @@ const Row = styled.div`
 `;
 const Container = styled.div`
   width: 100%;
-  margin: auto;
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Content = styled.div`
+  max-width: 95vw;
 `;
 const START_NODE_COL = 5;
 const START_NODE_ROW = 5;
@@ -68,6 +72,9 @@ export default class PathfindingVisualizer extends React.Component {
         }
         let node = grid[i][j];
         node.isVisited = false;
+        if (i < 1 && j < 5) {
+          console.log("actual node", node);
+        }
         grid[i][j] = node;
         if (i < 1 && j < 5) {
           console.log("after node", grid[i][j]);
@@ -177,27 +184,29 @@ export default class PathfindingVisualizer extends React.Component {
   render() {
     return (
       <Container>
-        <button onClick={this.visualizeDjikstra}>
-          Visualize Djikstra's algorithm
-        </button>
-        <button onClick={this.reset}>Reset</button>
-        {this.state.grid.map((row, rowInd) => {
-          return (
-            <Row key={rowInd}>
-              {row.map((node, colInd) => {
-                return (
-                  <Node
-                    key={colInd}
-                    {...node}
-                    onMouseDown={() => this.handleMouseDown(rowInd, colInd)}
-                    onMouseUp={() => this.handleMouseUp()}
-                    onMouseEnter={() => this.handleMouseEnter(rowInd, colInd)}
-                  />
-                );
-              })}
-            </Row>
-          );
-        })}
+        <Content>
+          <button onClick={this.visualizeDjikstra}>
+            Visualize Djikstra's algorithm
+          </button>
+          <button onClick={this.reset}>Reset</button>
+          {this.state.grid.map((row, rowInd) => {
+            return (
+              <Row key={rowInd}>
+                {row.map((node, colInd) => {
+                  return (
+                    <Node
+                      key={colInd}
+                      {...node}
+                      onMouseDown={() => this.handleMouseDown(rowInd, colInd)}
+                      onMouseUp={() => this.handleMouseUp()}
+                      onMouseEnter={() => this.handleMouseEnter(rowInd, colInd)}
+                    />
+                  );
+                })}
+              </Row>
+            );
+          })}
+        </Content>
       </Container>
     );
   }

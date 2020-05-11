@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import styled from "styled-components";
 
 const NodeContainer = styled.div`
@@ -6,7 +6,7 @@ const NodeContainer = styled.div`
   height: 40px;
   border: solid 1px black;
   margin: 1px;
-  background-color: ${props =>
+  background-color: ${(props) =>
     props.isStart
       ? "green"
       : props.isFinish
@@ -19,7 +19,7 @@ const NodeContainer = styled.div`
       ? "grey"
       : "white"};
   transition: 0.4s easy-in-out;
-  animation-name: ${props =>
+  animation-name: ${(props) =>
     props.isVisited ? "visitedAnimation" : props.isWall ? "" : ""};
   animation-duration: 1s;
   animation-timing-function: ease-out;
@@ -31,8 +31,5 @@ const NodeContainer = styled.div`
 `;
 
 export default function Node(props) {
-  // Déclaration d'une nouvelle variable d'état, que l'on appellera “count”
-  const [count, setCount] = useState(0);
-
   return <NodeContainer {...props}></NodeContainer>;
 }
