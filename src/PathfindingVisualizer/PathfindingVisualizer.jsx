@@ -39,6 +39,14 @@ export default class PathfindingVisualizer extends React.Component {
     console.log("mounting component");
   }
 
+  promisedSetState = (newState) => {
+    return new Promise((resolve) => {
+      this.setState(newState, () => {
+        resolve();
+      });
+    });
+  };
+
   getInitialGrid() {
     let grid = [];
     for (let row = 0; row < 20; row++) {
@@ -117,21 +125,21 @@ export default class PathfindingVisualizer extends React.Component {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
           this.animateShortestPath(nodesInShortestPathOrder);
-        }, 50 * i);
+        }, 100 * i);
         return;
       }
       setTimeout(() => {
-        if (i < 2) {
-          const node = visitedNodesInOrder[i];
-          console.log("dans la boucle", node);
-          const newGrid = JSON.parse(JSON.stringify(this.state.grid));
-          const newNode = { ...node, isVisited: true };
-          console.log("old grid", newGrid);
-          newGrid[node.row][node.col] = newNode;
-          console.log("newgrid", newGrid);
-          this.setState({ grid: newGrid });
-        }
-      }, 50 * i);
+        const node = visitedNodesInOrder[i];
+        console.log("dans la boucle", node);
+        let newGrid = JSON.parse(JSON.stringify(this.state.grid));
+        const newNode = { ...node, isVisited: true };
+        console.log("old grid", newGrid);
+        newGrid[node.row][node.col] = newNode;
+        console.log("newgrid", newGrid);
+        this.setState({ grid: newGrid });
+        //await this.sleep(100);
+        //await this.promisedSetState({ grid: newGrid });
+      }, 100 * i);
     }
     // let locationInArray = 0;
     //
