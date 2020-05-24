@@ -10,6 +10,7 @@ const Container = styled.div`
 `;
 const MyTitle = styled.h1`
   font-size: 34px;
+  line-height: 35px;
 `;
 const Explanation = styled.p`
   font-size: 22px;
