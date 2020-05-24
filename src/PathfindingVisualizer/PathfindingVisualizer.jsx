@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { djikstra, getNodesInShortestPathOrder } from "../algorithms/djikstra";
 import Astar from "../algorithms/Astar";
 import * as _ from "lodash";
+import Footer from "./Footer";
 
 const Button = styled.button`
   padding: 7px 15px;
@@ -26,7 +27,12 @@ const Row = styled.div`
   display: flex;
   flex-direction: row;
 `;
+const BigContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 const Container = styled.div`
+  min-height: 100vh;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -298,45 +304,52 @@ export default class PathfindingVisualizer extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Title />
-        <Content>
-          <Button onClick={this.visualizeDjikstra}>
-            Visualize Djikstra's algorithm
-          </Button>
-          <Button onClick={this.visualizeAstar}>Visualize A* algorithm</Button>
-          <Button onClick={this.generateRandomWall}>
-            Generate random Laby
-          </Button>
-          <Button onClick={this.reset}>Reset</Button>
-          {this.state.grid.map((row, rowInd) => {
-            return (
-              <Row key={rowInd}>
-                {row.map((node, colInd) => {
-                  return (
-                    <Node
-                      key={colInd}
-                      {...node}
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        this.handleRightClick(rowInd, colInd);
-                      }}
-                      onMouseDown={(e) => {
-                        // this is only for left click mousedown
-                        if (e.button === 0) {
-                          this.handleMouseDown(rowInd, colInd);
+      <BigContainer>
+        <Container>
+          <Title />
+          <Content>
+            <Button onClick={this.visualizeDjikstra}>
+              Visualize Djikstra's algorithm
+            </Button>
+            <Button onClick={this.visualizeAstar}>
+              Visualize A* algorithm
+            </Button>
+            <Button onClick={this.generateRandomWall}>
+              Generate random Laby
+            </Button>
+            <Button onClick={this.reset}>Reset</Button>
+            {this.state.grid.map((row, rowInd) => {
+              return (
+                <Row key={rowInd}>
+                  {row.map((node, colInd) => {
+                    return (
+                      <Node
+                        key={colInd}
+                        {...node}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          this.handleRightClick(rowInd, colInd);
+                        }}
+                        onMouseDown={(e) => {
+                          // this is only for left click mousedown
+                          if (e.button === 0) {
+                            this.handleMouseDown(rowInd, colInd);
+                          }
+                        }}
+                        onMouseUp={() => this.handleMouseUp()}
+                        onMouseEnter={() =>
+                          this.handleMouseEnter(rowInd, colInd)
                         }
-                      }}
-                      onMouseUp={() => this.handleMouseUp()}
-                      onMouseEnter={() => this.handleMouseEnter(rowInd, colInd)}
-                    />
-                  );
-                })}
-              </Row>
-            );
-          })}
-        </Content>
-      </Container>
+                      />
+                    );
+                  })}
+                </Row>
+              );
+            })}
+          </Content>
+        </Container>
+        <Footer />
+      </BigContainer>
     );
   }
 }
