@@ -53,33 +53,48 @@
 
 @keyframes visitedAnimation {
   0% {
-    transform: scale(0.3);
-    background-color: rgba(0, 0, 66, 0.75);
+    transform: scale(0.6);
+    background-color: #EEC643;
     border-radius: 100%;
   }
 
   50% {
-    background-color: rgba(17, 104, 217, 0.75);
+    background-color: #141414;
   }
 
   75% {
-    transform: scale(1.2);
-    backgound-color: rgba(0, 217, 160, 0.75);
+    transform: scale(1.1);
+    backgound-color: #0D21A1;
+    border-radius: 50%;
   }
 
   100% {
-    background-color: blue;
+    background-color: #011638;
     transform: scale(1);
     border-radius: 0;
   }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@keyframes shortestPathAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: #6622CC;
+    border-radius: 100%;
   }
 
-  to {
-    transform: rotate(360deg);
+  50% {
+    background-color: #A755C2;
+  }
+
+  75% {
+    transform: scale(1.1);
+    backgound-color: #B07C9E;
+    border-radius: 50%;
+  }
+
+  100% {
+    background-color: #D2A1B8;
+    transform: scale(1);
+    border-radius: 0;
   }
 }

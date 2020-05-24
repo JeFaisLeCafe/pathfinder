@@ -6,22 +6,32 @@ const NodeContainer = styled.div`
   height: 40px;
   border: solid 1px black;
   margin: 1px;
-  background-color: ${(props) =>
+  background-color: ${props =>
     props.isStart
       ? "green"
       : props.isFinish
       ? "red"
       : props.isShortedPath
-      ? "yellow"
+      ? "#D2A1B8"
       : props.isVisited
-      ? "blue"
+      ? "#011638"
       : props.isWall
       ? "grey"
       : "white"};
-  transition: 0.4s easy-in-out;
-  animation-name: ${(props) =>
-    props.isVisited ? "visitedAnimation" : props.isWall ? "" : ""};
-  animation-duration: 1s;
+  transition: 1s easy-in-out;
+  animation-name: ${props =>
+    props.isStart
+      ? ""
+      : props.isFinish
+      ? ""
+      : props.isShortedPath
+      ? "shortestPathAnimation"
+      : props.isVisited
+      ? "visitedAnimation"
+      : props.isWall
+      ? ""
+      : ""};
+  animation-duration: 0.8s;
   animation-timing-function: ease-out;
   animation-delay: 0;
   animation-direction: alternate;

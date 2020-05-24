@@ -1,7 +1,8 @@
 import React from "react";
 import Node from "./Node/Node";
 import styled from "styled-components";
-import { djikstra, getNodesInShortestPathOrder } from "../algorithms/djikstra";
+import {djikstra, getNodesInShortestPathOrder} from "../algorithms/djikstra";
+import * as _ from "lodash";
 
 const Row = styled.div`
   display: flex;
@@ -20,13 +21,17 @@ const START_NODE_COL = 5;
 const START_NODE_ROW = 5;
 const FINISH_NODE_COL = 15;
 const FINISH_NODE_ROW = 5;
-
+const TIME_PARAM = 80;
 export default class PathfindingVisualizer extends React.Component {
   constructor(props) {
     super();
     this.state = {
       grid: [],
       mouseIsPressed: false,
+      isDraggingStart: false,
+      isDraggingFinish: false,
+      startNode: {col: START_NODE_COL, row: START_NODE_ROW},
+      finishNode: {col: FINISH_NODE_COL, row: FINISH_NODE_ROW}
     };
     this.visualizeDjikstra = this.visualizeDjikstra.bind(this);
     this.animateShortestPath = this.animateShortestPath.bind(this);
@@ -35,17 +40,8 @@ export default class PathfindingVisualizer extends React.Component {
 
   componentDidMount() {
     const grid = this.getInitialGrid();
-    this.setState({ grid });
-    console.log("mounting component");
+    this.setState({grid});
   }
-
-  promisedSetState = (newState) => {
-    return new Promise((resolve) => {
-      this.setState(newState, () => {
-        resolve();
-      });
-    });
-  };
 
   getInitialGrid() {
     let grid = [];
@@ -63,12 +59,14 @@ export default class PathfindingVisualizer extends React.Component {
     return {
       col,
       row,
-      isStart: row === START_NODE_COL && col === START_NODE_COL,
-      isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+      isStart:
+        row === this.state.startNode.row && col === this.state.startNode.col,
+      isFinish:
+        row === this.state.finishNode.row && col === this.state.finishNode.col,
       distance: Infinity,
       isVisited: false,
       isWall: false,
-      previousNode: null,
+      previousNode: null
     };
   }
 
@@ -76,47 +74,42 @@ export default class PathfindingVisualizer extends React.Component {
     for (let i = 0; i < grid.length; i++) {
       for (let j = 0; j < grid[i].length; j++) {
         if (i < 1 && j < 5) {
-          console.log("before node", grid[i][j]);
         }
         let node = grid[i][j];
         node.isVisited = false;
         if (i < 1 && j < 5) {
-          console.log("actual node", node);
         }
         grid[i][j] = node;
         if (i < 1 && j < 5) {
-          console.log("after node", grid[i][j]);
         }
       }
     }
   }
 
   visualizeDjikstra() {
-    let grid = [...this.state.grid];
-    console.log("before all", JSON.stringify(grid));
+    let grid = _.cloneDeep(this.state.grid);
     this.resetIsVisited(grid);
-    console.log("before almost all", grid);
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const startNode = grid[this.state.startNode.row][this.state.startNode.col];
+    const finishNode =
+      grid[this.state.finishNode.row][this.state.finishNode.col];
     const visitedNodesInOrder = djikstra(grid, startNode, finishNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
 
     this.animateDjikstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
   sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   animateShortestPath(nodesInShortestPathOrder) {
-    console.log("in the shotest path");
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
         const newGrid = JSON.parse(JSON.stringify(this.state.grid));
-        const newNode = { ...node, isShortedPath: true };
+        const newNode = {...node, isShortedPath: true};
         newGrid[node.row][node.col] = newNode;
-        this.setState({ grid: newGrid });
-      }, 50 * i);
+        this.setState({grid: newGrid});
+      }, TIME_PARAM * i);
     }
   }
 
@@ -125,73 +118,112 @@ export default class PathfindingVisualizer extends React.Component {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
           this.animateShortestPath(nodesInShortestPathOrder);
-        }, 100 * i);
+        }, TIME_PARAM * i);
         return;
       }
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
-        console.log("dans la boucle", node);
-        let newGrid = JSON.parse(JSON.stringify(this.state.grid));
-        const newNode = { ...node, isVisited: true };
-        console.log("old grid", newGrid);
+        const newGrid = JSON.parse(JSON.stringify(this.state.grid));
+        const newNode = {...node, isVisited: true};
         newGrid[node.row][node.col] = newNode;
-        console.log("newgrid", newGrid);
-        this.setState({ grid: newGrid });
-        //await this.sleep(100);
-        //await this.promisedSetState({ grid: newGrid });
-      }, 100 * i);
+        this.setState({grid: newGrid});
+      }, TIME_PARAM * i);
     }
-    // let locationInArray = 0;
-    //
-    // function delayedOutput() {
-    //   // now we replace the correct modified node in state
-    //   const newGrid = this.state.grid.slice();
-    //   const node = visitedNodesInOrder[locationInArray];
-    //   console.log("in da boucle", node);
-    //   const newNode = { ...node, isVisited: true };
-    //   newGrid[node.row][node.col] = newNode;
-    //   console.log("New GRID", newGrid);
-    //   this.setState({ grid: newGrid });
-    //
-    //   locationInArray++;
-    //   if (locationInArray < visitedNodesInOrder.length) {
-    //     setTimeout(delayedOutput, 1000);
-    //   }
-    // }
-    // delayedOutput();
   }
 
   getNewGridWithWallToggled(grid, row, col) {
-    console.log("getting new grid wall stuff", grid);
-    let newGrid = grid.slice();
+    let newGrid = _.cloneDeep(grid);
     let node = newGrid[row][col];
     if (!node.isStart && !node.isFinish) {
-      console.log("dans le if");
-      const newNode = { ...node, isWall: !node.isWall };
+      const newNode = {...node, isWall: !node.isWall};
+      newGrid[row][col] = newNode;
+    }
+    return newGrid;
+  }
+  getNewGridWithStartMoved(grid, row, col) {
+    console.log("getNewGridWithStartMoved", this.state);
+    let newGrid = _.cloneDeep(grid);
+    let node = newGrid[row][col];
+    if (!node.isFinish) {
+      const newNode = {...node, isStart: true};
       newGrid[row][col] = newNode;
     }
     return newGrid;
   }
 
+  handleRightClick(row, col) {
+    let newGrid = _.cloneDeep(this.state.grid);
+    let node = newGrid[row][col];
+    // we handle here all the different possibilities after a left click
+    // first, cases where we are moving the start/finish, and setting a new start/finish
+    if (this.state.isDraggingStart && !node.isFinish) {
+      node = {...node, isStart: true, isWall: false};
+      this.setState({isDraggingStart: false, startNode: {row, col}});
+    } else if (this.state.isDraggingFinish && !node.isStart) {
+      node = {...node, isFinish: true, isWall: false};
+      this.setState({isDraggingFinish: false, finishNode: {col, row}});
+    } //then cases where we are starting to move, ie right clicking on start/finish
+    else if (
+      !this.state.isDraggingStart &&
+      !this.state.isDraggingFinish &&
+      node.isStart
+    ) {
+      node = {...node, isStart: false, isWall: false};
+      this.setState({isDraggingStart: true});
+    } else if (
+      !this.state.isDraggingStart &&
+      !this.state.isDraggingFinish &&
+      node.isFinish
+    ) {
+      node = {...node, isFinish: false, isWall: false};
+      this.setState({isDraggingFinish: true});
+    }
+    newGrid[row][col] = node;
+    this.setState({grid: newGrid});
+    return false;
+  }
+
   handleMouseDown(row, col) {
-    const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({ grid: newGrid });
-    this.setState({ mouseIsPressed: true });
+    const node = this.state.grid[row][col];
+    if (node.isStart) {
+      // we want to drag and drop the start
+      this.setState({isDraggingStart: true});
+    } else if (node.isFinish) {
+      this.setState({isDraggingFinish: true});
+    } else {
+      const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
+      this.setState({grid: newGrid});
+      this.setState({mouseIsPressed: true});
+    }
   }
 
   handleMouseEnter(row, col) {
     if (!this.state.mouseIsPressed) return;
-    const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({ grid: newGrid });
+
+    let newGrid = this.state.grid;
+    const node = newGrid[row][col];
+    console.log("entering");
+    if (this.state.isDraggingStart) {
+      // we want to drag and drop the start
+      console.log("in the right plce");
+      newGrid = this.getNewGridWithStartMoved(newGrid, row, col);
+    } else if (node.isFinish) {
+      this.setState({isDraggingFinish: true});
+    } else {
+      newGrid = this.getNewGridWithWallToggled(newGrid, row, col);
+    }
+    this.setState({grid: newGrid});
   }
 
   handleMouseUp() {
-    this.setState({ mouseIsPressed: false });
+    this.setState({
+      mouseIsPressed: false
+    });
   }
 
   reset() {
     const grid = this.getInitialGrid();
-    this.setState({ grid });
+    this.setState({grid});
   }
 
   render() {
@@ -210,7 +242,17 @@ export default class PathfindingVisualizer extends React.Component {
                     <Node
                       key={colInd}
                       {...node}
-                      onMouseDown={() => this.handleMouseDown(rowInd, colInd)}
+                      onContextMenu={e => {
+                        e.preventDefault();
+                        this.handleRightClick(rowInd, colInd);
+                      }}
+                      onMouseDown={e => {
+                        // this is only for left click mousedown
+                        if (e.button === 0) {
+                          console.log("hah");
+                          this.handleMouseDown(rowInd, colInd);
+                        }
+                      }}
                       onMouseUp={() => this.handleMouseUp()}
                       onMouseEnter={() => this.handleMouseEnter(rowInd, colInd)}
                     />
