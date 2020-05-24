@@ -39,11 +39,11 @@ function search(grid, start, end) {
         ret.push(curr);
         curr = curr.parent;
       }
-      return { shortestPath: ret.reverse(), visitedNodes };
+      return {shortestPath: ret.reverse(), visitedNodes};
     }
 
     // Normal case -- move currentNode from open to closed, process each of its neighbors
-    _.remove(openList, (n) => {
+    _.remove(openList, n => {
       return n.col === currentNode.col && n.row === currentNode.row;
     });
     closedList.push(currentNode);
@@ -53,7 +53,7 @@ function search(grid, start, end) {
       let neighbor = neighbors[i];
       if (
         closedList.find(
-          (n) => neighbor.col === n.col && neighbor.row === n.row
+          n => neighbor.col === n.col && neighbor.row === n.row
         ) ||
         neighbor.isWall
       ) {
@@ -67,7 +67,7 @@ function search(grid, start, end) {
       let gScoreIsBest = false;
 
       if (
-        !openList.find((n) => neighbor.col === n.col && neighbor.row === n.row)
+        !openList.find(n => neighbor.col === n.col && neighbor.row === n.row)
       ) {
         // This the the first time we have arrived at this node, it must be the best
         // Also, we need to take the h (heuristic) score since we haven't done so yet
@@ -92,7 +92,7 @@ function search(grid, start, end) {
   }
 
   // No result was found -- empty array signifies failure to find path
-  return [];
+  return {shortestPath: [], visitedNodes};
 }
 
 function heuristic(startNode, finishNode) {

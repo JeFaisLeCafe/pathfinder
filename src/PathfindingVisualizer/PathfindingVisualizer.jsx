@@ -6,6 +6,22 @@ import { djikstra, getNodesInShortestPathOrder } from "../algorithms/djikstra";
 import Astar from "../algorithms/Astar";
 import * as _ from "lodash";
 
+const Button = styled.button`
+  padding: 7px 15px;
+  font-size: 25px;
+  margin: 10px;
+  background-color: #011638;
+  color: white;
+  border: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+
+  :hover {
+    cursor: pointer;
+    background-color: #d2a1b8;
+  }
+`;
 const Row = styled.div`
   display: flex;
   flex-direction: row;
@@ -22,11 +38,11 @@ const Content = styled.div`
 `;
 const GRID_COL_NUMBER = 30;
 const GRID_ROW_NUMBER = 15;
-const START_NODE_COL = 2;
-const START_NODE_ROW = 2;
-const FINISH_NODE_COL = GRID_COL_NUMBER - 2;
-const FINISH_NODE_ROW = GRID_ROW_NUMBER - 2;
-const TIME_PARAM = 80;
+const START_NODE_COL = 5;
+const START_NODE_ROW = 5;
+const FINISH_NODE_COL = GRID_COL_NUMBER - 5;
+const FINISH_NODE_ROW = GRID_ROW_NUMBER - 5;
+const TIME_PARAM = 50;
 export default class PathfindingVisualizer extends React.Component {
   constructor(props) {
     super();
@@ -43,6 +59,7 @@ export default class PathfindingVisualizer extends React.Component {
     this.reset = this.reset.bind(this);
 
     this.visualizeAstar = this.visualizeAstar.bind(this);
+    this.generateRandomWall = this.generateRandomWall.bind(this);
   }
 
   componentDidMount() {
@@ -77,25 +94,30 @@ export default class PathfindingVisualizer extends React.Component {
     };
   }
 
-  resetIsVisited(grid) {
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[i].length; j++) {
-        if (i < 1 && j < 5) {
-        }
-        let node = grid[i][j];
-        node.isVisited = false;
-        if (i < 1 && j < 5) {
-        }
-        grid[i][j] = node;
-        if (i < 1 && j < 5) {
-        }
+  resetNode(node) {
+    return {
+      ...node,
+      isVisited: false,
+      isShortedPath: false,
+      display: Infinity,
+      previousNode: null,
+    };
+  }
+
+  resetIsVisited() {
+    let newGrid = _.cloneDeep(this.state.grid);
+    for (let i = 0; i < newGrid.length; i++) {
+      for (let j = 0; j < newGrid[i].length; j++) {
+        const resetedNode = this.resetNode(newGrid[i][j]);
+        newGrid[i][j] = resetedNode;
       }
     }
+    this.setState({ grid: newGrid });
+    return newGrid;
   }
 
   visualizeAstar() {
-    let grid = _.cloneDeep(this.state.grid);
-    this.resetIsVisited(grid);
+    let grid = _.cloneDeep(this.resetIsVisited());
     const startNode = grid[this.state.startNode.row][this.state.startNode.col];
     const finishNode =
       grid[this.state.finishNode.row][this.state.finishNode.col];
@@ -127,8 +149,7 @@ export default class PathfindingVisualizer extends React.Component {
   }
 
   visualizeDjikstra() {
-    let grid = _.cloneDeep(this.state.grid);
-    this.resetIsVisited(grid);
+    let grid = _.cloneDeep(this.resetIsVisited());
     const startNode = grid[this.state.startNode.row][this.state.startNode.col];
     const finishNode =
       grid[this.state.finishNode.row][this.state.finishNode.col];
@@ -255,6 +276,21 @@ export default class PathfindingVisualizer extends React.Component {
     });
   }
 
+  generateRandomWall() {
+    this.reset();
+
+    const grid = _.cloneDeep(this.state.grid);
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        const cell = grid[i][j];
+        if (Math.random() < 0.1 && !cell.isStart && !cell.isFinish) {
+          grid[i][j] = { ...grid[i][j], isWall: true };
+        }
+      }
+    }
+    this.setState({ grid });
+  }
+
   reset() {
     const grid = this.getInitialGrid();
     this.setState({ grid });
@@ -265,11 +301,14 @@ export default class PathfindingVisualizer extends React.Component {
       <Container>
         <Title />
         <Content>
-          <button onClick={this.visualizeDjikstra}>
+          <Button onClick={this.visualizeDjikstra}>
             Visualize Djikstra's algorithm
-          </button>
-          <button onClick={this.visualizeAstar}>Visualize A* algorithm</button>
-          <button onClick={this.reset}>Reset</button>
+          </Button>
+          <Button onClick={this.visualizeAstar}>Visualize A* algorithm</Button>
+          <Button onClick={this.generateRandomWall}>
+            Generate random Laby
+          </Button>
+          <Button onClick={this.reset}>Reset</Button>
           {this.state.grid.map((row, rowInd) => {
             return (
               <Row key={rowInd}>
