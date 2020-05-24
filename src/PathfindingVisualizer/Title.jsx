@@ -8,7 +8,7 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
 `;
-const _Title = styled.h1`
+const MyTitle = styled.h1`
   font-size: 34px;
 `;
 const Explanation = styled.p`
@@ -18,7 +18,7 @@ const Explanation = styled.p`
 export default function Title(props) {
   return (
     <Container>
-      <_Title>Pathfinding Algorithms Visualizer</_Title>
+      <MyTitle>Pathfinding Algorithms Visualizer</MyTitle>
       <Explanation>
         Hi, and welcome here ! You can play with this tool to visualize
         different pathfinding algorithms. <br />
