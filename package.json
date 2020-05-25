@@ -2,7 +2,6 @@
   "name": "pathfinder",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://jefaislecafe.github.io/pathfinder",
   "engine": {
     "npm": "6.14.5",
     "node": "v14.2.0"
